@@ -1,7 +1,7 @@
 import * as fs from "fs";
 
 const GetInputData = async () => {
-  const Buffer = await fs.readFileSync(__dirname + "/004.test.input.txt");
+  const Buffer = await fs.readFileSync(__dirname + "/004.input.txt");
   return Buffer.toString();
 };
 
@@ -30,38 +30,80 @@ const getBoards = (input: string[]): number[][][] => {
     );
 };
 
-const getRowFromBoard = (board: number[][], rowIndex: number): number[] => {
-  return board[rowIndex];
-};
-
-const getColumnFromBoard = (board: number[][], colIndex: number): number[] => {
-  return board.map((x) => x[colIndex]);
-};
-
-const getColumnsFromBoard = (board: number[][]): number[][] => {
-  return board[0].map((x, i) => {
-    return board.map((x) => x[i]);
+const boardHasWinner = (board: number[][]): boolean => {
+  let winner = false;
+  // check rows:
+  board.forEach((row) => {
+    if (row.filter((x) => x === -1).length === row.length) {
+      winner = true;
+    }
   });
+
+  // check columns:
+  board[0].forEach((col, colIndex) => {
+    const columnItems = board.map((row) => row[colIndex]);
+    if (columnItems.filter((x) => x === -1).length === board.length)
+      winner = true;
+  });
+
+  return winner;
 };
 
-const checkBoard = (board: number[][]) => {
-  const rows = board.filter((x) => x === new Array(5).fill(-1));
-  const columns = getColumnsFromBoard(board).filter(
-    (x) => x === new Array(5).fill(-1)
-  );
+const getBoardScore = (board: number[][], call: number): number => {
+  const totalLeft = board
+    .flat()
+    .filter((x) => x > -1)
+    .reduce((acc, cur) => acc + cur, 0);
 
-  console.log(rows.length || columns.length);
+  return totalLeft * call;
+};
+
+const playOutGame = (calls: number[], boards: number[][][]) => {
+  const wonBoards: { score: number; boardIndex: number }[] = [];
+
+  calls.forEach((call) => {
+    boards.forEach((board, boardIndex) => {
+      board.forEach((row) => {
+        row.map((value, colIndex) => {
+          if (value === call) {
+            row[colIndex] = -1;
+          }
+        });
+      });
+      // CHECK IF BOARD HAS WON:
+      if (
+        boardHasWinner(board) &&
+        wonBoards.filter((x) => x.boardIndex === boardIndex).length === 0
+      ) {
+        const score = getBoardScore(board, call);
+        wonBoards.push({ score, boardIndex });
+
+        if (wonBoards.length === boards.length) return;
+      }
+    });
+  });
+
+  return wonBoards;
 };
 
 export const Solve4x1 = async () => {
   const input = await GetInputData();
   const splitInput = input.trim().split("\n");
   const calls = getCalls(splitInput);
-  console.log(calls);
   const boards = getBoards(splitInput);
-  console.log(boards);
 
-  calls.forEach((call) => {
-    boards.forEach((board, boardIndex) => {});
-  });
+  const result = playOutGame(calls, boards);
+
+  console.log(`Day 4 Part 1 = ${result[0].score}`);
+};
+
+export const Solve4x2 = async () => {
+  const input = await GetInputData();
+  const splitInput = input.trim().split("\n");
+  const calls = getCalls(splitInput);
+  const boards = getBoards(splitInput);
+
+  const result = playOutGame(calls, boards);
+
+  console.log(`Day 4 Part 2 = ${result[result.length - 1].score}`);
 };
