@@ -1,7 +1,7 @@
 import * as fs from "fs";
 
 const GetInputData = async () => {
-  const Buffer = await fs.readFileSync(__dirname + "/005.test.input.txt");
+  const Buffer = await fs.readFileSync(__dirname + "/005.input.txt");
   return Buffer.toString();
 };
 
@@ -36,15 +36,102 @@ const lineIsHorizontalOrVertical = (line: Line): boolean => {
   return false;
 };
 
-const diff = (a: number, b: number) => {
-  return a > b ? a - b : b - a;
+const horizontal = (line: Line): boolean => {
+  return line.from.x !== line.to.x && line.from.y === line.to.y;
+};
+const vertical = (line: Line): boolean => {
+  return line.from.x === line.to.x && line.from.y !== line.to.y;
+};
+const diagonal = (line: Line): boolean => {
+  return line.from.x !== line.to.x && line.from.y !== line.to.y;
 };
 
-const lineIsDiagonal = (line: Line): boolean => {
-  const { from, to } = line;
-  if (lineIsHorizontalOrVertical(line)) return true;
-  if (diff(from.x, to.x) === diff(from.y, to.y)) return true;
-  return false;
+const getPointsForLine = (line: Line) => {
+  if (horizontal(line)) {
+    let points = [];
+    for (
+      let x = Math.min(line.from.x, line.to.x);
+      x <= Math.max(line.from.x, line.to.x);
+      x++
+    ) {
+      for (
+        let y = Math.min(line.from.y, line.to.y);
+        y <= Math.max(line.from.y, line.to.y);
+        y++
+      ) {
+        const key = `${x},${y}`;
+        points.push(key);
+      }
+    }
+    return points;
+  }
+  if (vertical(line)) {
+    let points = [];
+    for (
+      let x = Math.min(line.from.x, line.to.x);
+      x <= Math.max(line.from.x, line.to.x);
+      x++
+    ) {
+      for (
+        let y = Math.min(line.from.y, line.to.y);
+        y <= Math.max(line.from.y, line.to.y);
+        y++
+      ) {
+        const key = `${x},${y}`;
+        points.push(key);
+      }
+    }
+    return points;
+  }
+  if (diagonal(line)) {
+    let points = [];
+
+    // down and left
+    if (line.from.y < line.to.y && line.from.x > line.to.x) {
+      for (let x = line.from.x; x >= line.to.x; x--) {
+        for (let y = line.from.y; y <= line.to.y; y++) {
+          const key = `${x},${y}`;
+          points.push(key);
+          x--;
+        }
+      }
+    }
+
+    // up and left
+    if (line.from.y > line.to.y && line.from.x > line.to.x) {
+      for (let x = line.from.x; x >= line.to.x; x--) {
+        for (let y = line.from.y; y >= line.to.y; y--) {
+          const key = `${x},${y}`;
+          points.push(key);
+          x--;
+        }
+      }
+    }
+
+    // down and right
+    if (line.from.y < line.to.y && line.from.x < line.to.x) {
+      for (let x = line.from.x; x <= line.to.x; x++) {
+        for (let y = line.from.y; y <= line.to.y; y++) {
+          const key = `${x},${y}`;
+          points.push(key);
+          x++;
+        }
+      }
+    }
+
+    // up and right
+    if (line.from.y > line.to.y && line.from.x < line.to.x) {
+      for (let x = line.from.x; x <= line.to.x; x++) {
+        for (let y = line.from.y; y >= line.to.y; y--) {
+          const key = `${x},${y}`;
+          points.push(key);
+          x++;
+        }
+      }
+    }
+
+    return points;
+  }
 };
 
 export const Solve5x1 = async () => {
@@ -54,7 +141,7 @@ export const Solve5x1 = async () => {
 
   let grid: any = {};
 
-  lines.forEach((line) => {
+  lines.filter(lineIsHorizontalOrVertical).forEach((line) => {
     for (
       let x = Math.min(line.from.x, line.to.x);
       x <= Math.max(line.from.x, line.to.x);
@@ -88,24 +175,17 @@ export const Solve5x2 = async () => {
   let grid: any = {};
 
   lines.forEach((line) => {
-    for (
-      let x = Math.min(line.from.x, line.to.x);
-      x <= Math.max(line.from.x, line.to.x);
-      x++
-    ) {
-      for (
-        let y = Math.min(line.from.y, line.to.y);
-        y <= Math.max(line.from.y, line.to.y);
-        y++
-      ) {
-        const key = `${x},${y}`;
-        if (grid[key]) {
-          grid[key] += 1;
-        } else {
-          grid[key] = 1;
-        }
+    const points = getPointsForLine(line);
+
+    points?.flat().map((point) => {
+      const [x, y] = point.split(",").map(Number);
+      const key = `${x},${y}`;
+      if (grid[key]) {
+        grid[key] += 1;
+      } else {
+        grid[key] = 1;
       }
-    }
+    });
   });
 
   const duplicates = Object.keys(grid).filter((x) => grid[x] > 1);
