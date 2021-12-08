@@ -131,32 +131,50 @@ type Segment = "a" | "b" | "c" | "d" | "e" | "f" | "g";
 
 type Map = Record<Segment, Segment>;
 
+const commonOfTwoArrays = (a: [], b: []) => {};
+
+// https://youtu.be/nhEf8b6MZuk?t=953
+
 const workOutDigits = (map: string) => {
   let mapArray = new Array(10).fill(0);
+  let mapLetters = {};
   const digits = map.split(" ").sort((a, b) => a.length - b.length);
   digits.forEach((d) => {
     if (d.length === 2) {
-      mapArray[0] = d;
+      // 1
+      mapArray[1] = d;
     }
     if (d.length === 3) {
-      mapArray[2] = d;
-    }
-    if (d.length === 4) {
-      mapArray[3] = d;
-    }
-    if (d.length === 7) {
+      // 7
       mapArray[7] = d;
     }
+    if (d.length === 4) {
+      // 4
+      mapArray[4] = d;
+    }
+    if (d.length === 7) {
+      // 8
+      mapArray[8] = d;
+    }
   });
+  console.log(mapArray);
+
+  Object.assign(mapLetters, {
+    a: mapArray[7]
+      .split("")
+      .filter((x: string) => !mapArray[1].split("").includes(x))[0],
+  }); // A
+
+  console.log(mapLetters);
+
   const remainingDigits = digits.filter((x) => !mapArray.includes(x));
 
-  const twosEtc = digits.filter((x) => x.length === 5);
-  const zerosEtc = digits.filter((x) => x.length === 6);
+  // const twosEtc = digits.filter((x) => x.length === 5);
+  // const zerosEtc = digits.filter((x) => x.length === 6);
 
-  console.log(mapArray);
   console.log(remainingDigits);
-  console.log(twosEtc.filter((x) => x)); // need to work out which is unique/has a segment from number 8 mapping
-  console.log(zerosEtc);
+  // console.log(twosEtc.filter((x) => x)); // need to work out which is unique/has a segment from number 8 mapping
+  // console.log(zerosEtc);
 };
 
 export const Solve8x2 = async () => {
