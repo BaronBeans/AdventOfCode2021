@@ -54,31 +54,31 @@ export const Solve8x1 = async () => {
   console.log(`Day 8 Part 1 - ${x}`);
 };
 
+const doTheyContainTheSameSegment = (a: string, b: string) => {
+  return true;
+};
+
+const digitBContainsAtLeastOneSegmentFromA = (
+  a: string,
+  b: string
+): boolean => {
+  return b.split("").filter((x) => a.split("").includes(x)).length > 1;
+};
+
 const getLikelyNumber = (size: number, answers: {}, digit: string) => {
   switch (size) {
     case 6:
-      // console.log(
-      //   "0|6|9",
-      //   digit,
-      //   JSON.stringify(
-      //     Object.entries(answers).filter((x) => "0|6|9"),
-      //     null,
-      //     2
-      //   )
-      // );
-      const contenders = Object.entries(answers).filter(
-        ([key, value]) => key === "0|6|9"
-      );
-      console.log(contenders);
+      // console.log("answers", answers);
+      const clues = Object.values(answers)
+        .filter((x) => x === "0|6|9")
+        .map((x, i) => ({ key: Object.keys(answers)[i], value: x }));
+      // console.log("clues", clues);
+      if (clues.length > 1) {
+      }
       return "0|6|9";
     case 2:
       return 1;
     case 5:
-      // console.log("2|3|5", digit, answers);
-      const contenders2 = Object.entries(answers).filter(
-        ([key, value]) => key === "2|3|5"
-      );
-      console.log(contenders2);
       return "2|3|5";
     case 4:
       return 4;
@@ -96,25 +96,33 @@ export const Solve8x2 = async () => {
   const lines = input.trim().split("\n");
 
   const outputValues = lines.map((x) => x.split(" | "));
-  console.log(outputValues);
 
   const formatted = outputValues.map((line) => {
-    let answers = {};
+    let answers: Record<string, number> = {};
     return line[0].split(" ").map((digit) => {
       const size = new Set(Array.from(digit.split(""))).size;
       const guess: string | number = getLikelyNumber(size, answers, digit);
       Object.assign(answers, {
-        [guess]: digit,
         [digit]: guess,
       });
+      console.log("digit", digit);
+      console.log(
+        "answers",
+        Object.entries(answers)
+          .map(([key, value]) => ({ key, value }))
+          .filter((x) =>
+            x.value
+              .toString()
+              .split("")
+              .map((x) => )
+          )
+      );
       return {
         digit,
         guess,
       };
     });
   });
-
-  // console.log(formatted);
 
   console.log(`Day 8 Part 2 - `);
 };
