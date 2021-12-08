@@ -1,7 +1,4 @@
-# AdventOfCode2021
-
-snippet to generate new day:
-
+{
 	"Template for Day xx code": {
 		"scope": "javascript,typescript",
 		"prefix": "day",
@@ -23,14 +20,15 @@ snippet to generate new day:
 			"  const input = await GetTestData();",
 			"  const splitInput = input.trim().split(',');",
 			"$2",
-			"  console.log( `Day $1 Part 1 - ` );",
+			"  console.log(`Day $1 Part 1 - `);",
 			"};",
 			"",
 			"export const Solve$1x2 = async () => {",
 			"  const input = await GetTestData();",
 			"  const splitInput = input.trim().split(',');",
 			"",
-			"  console.log( `Day $1 Part 2 - ` );",
+			"  console.log(`Day $1 Part 2 - `);",
 			"};"
 		]
 	}
+}
