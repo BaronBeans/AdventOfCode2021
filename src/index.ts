@@ -6,6 +6,7 @@ import { Solve5x1, Solve5x2 } from "./005.solution";
 import { Solve6x1, Solve6x2 } from "./006.solution";
 import { Solve7x1, Solve7x2 } from "./007.solution";
 import { Solve8x1, Solve8x2 } from "./008.solution";
+import { Solve9x1, Solve9x2 } from "./009.solution";
 
 // Solve1x1();
 // Solve1x2();
@@ -28,5 +29,8 @@ import { Solve8x1, Solve8x2 } from "./008.solution";
 // Solve7x1();
 // Solve7x2();
 
-Solve8x1();
-Solve8x2();
+// Solve8x1();
+// Solve8x2();
+
+Solve9x1();
+Solve9x2();
