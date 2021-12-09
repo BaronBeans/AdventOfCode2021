@@ -10,19 +10,6 @@ const GetTestData = async () => {
   return Buffer.toString();
 };
 
-const digitSegments = {
-  0: 6,
-  1: 2,
-  2: 5,
-  3: 5,
-  4: 4,
-  5: 5,
-  6: 6,
-  7: 3,
-  8: 7,
-  9: 6,
-};
-
 export const filter = (input: { size: number; digit: string }): boolean => {
   let ret = false;
   if (input.size === 2) ret = true;
@@ -54,146 +41,97 @@ export const Solve8x1 = async () => {
   console.log(`Day 8 Part 1 - ${x}`);
 };
 
-const doTheyContainTheSameSegment = (a: string, b: string) => {
-  return true;
-};
-
-const digitBContainsAtLeastOneSegmentFromA = (
-  a: string,
-  b: string
-): boolean => {
-  return b.split("").filter((x) => a.split("").includes(x)).length > 1;
-};
-
-const getLikelyNumber = (size: number, answers: {}, digit: string) => {
-  switch (size) {
-    case 6:
-      // console.log("answers", answers);
-      const clues = Object.values(answers)
-        .filter((x) => x === "0|6|9")
-        .map((x, i) => ({ key: Object.keys(answers)[i], value: x }));
-      // console.log("clues", clues);
-      if (clues.length > 1) {
-      }
-      return "0|6|9";
-    case 2:
-      return 1;
-    case 5:
-      return "2|3|5";
-    case 4:
-      return 4;
-    case 3:
-      return 7;
-    case 7:
-      return 8;
-    default:
-      return "unknown";
-  }
-};
-
-// export const Solve8x2 = async () => {
-//   const input = await GetTestData();
-//   const lines = input.trim().split("\n");
-
-//   const outputValues = lines.map((x) => x.split(" | "));
-
-//   const formatted = outputValues.map((line) => {
-//     let answers: Record<string, number> = {};
-//     return line[0].split(" ").map((digit) => {
-//       const size = new Set(Array.from(digit.split(""))).size;
-//       const guess: string | number = getLikelyNumber(size, answers, digit);
-//       Object.assign(answers, {
-//         [digit]: guess,
-//       });
-//       console.log("digit", digit);
-//       // console.log(
-//       //   "answers",
-//       //   Object.entries(answers)
-//       //     .map(([key, value]) => ({ key, value }))
-//       //     .filter((x) =>
-//       //       x.value
-//       //         .toString()
-//       //         .split("")
-//       //         .map((x) => )
-//       //     )
-//       // );
-//       return {
-//         digit,
-//         guess,
-//       };
-//     });
-//   });
-
-//   console.log(`Day 8 Part 2 - `);
-// };
-
-type Segment = "a" | "b" | "c" | "d" | "e" | "f" | "g";
-
-type Map = Record<Segment, Segment>;
-
-const commonOfTwoArrays = (a: [], b: []) => {};
-
-// https://youtu.be/nhEf8b6MZuk?t=953
-
-const workOutDigits = (map: string) => {
-  let mapArray = new Array(10).fill(0);
-  let mapLetters = {};
-  const digits = map.split(" ").sort((a, b) => a.length - b.length);
-  digits.forEach((d) => {
-    if (d.length === 2) {
-      // 1
-      mapArray[1] = d;
-    }
-    if (d.length === 3) {
-      // 7
-      mapArray[7] = d;
-    }
-    if (d.length === 4) {
-      // 4
-      mapArray[4] = d;
-    }
-    if (d.length === 7) {
-      // 8
-      mapArray[8] = d;
-    }
+const containsAll = (a: string, b: string) => {
+  let ret = true;
+  const check = a.split("");
+  b.split("").forEach((d) => {
+    if (!check.includes(d)) ret = false;
   });
-  console.log(mapArray);
+  return ret;
+};
 
-  Object.assign(mapLetters, {
-    a: mapArray[7]
-      .split("")
-      .filter((x: string) => !mapArray[1].split("").includes(x))[0],
-  }); // A
+const alphabetize = (input: string) => {
+  return input
+    .split("")
+    .sort((a, b) => a.charCodeAt(0) - b.charCodeAt(0))
+    .join("");
+};
 
-  console.log(mapLetters);
+const decodeDigits = (digits: string[]) => {
+  digits.sort((a, b) => a.length - b.length);
 
-  const remainingDigits = digits.filter((x) => !mapArray.includes(x));
+  // ! EASY NUMBERS
+  // 1
+  let one = digits.filter((d) => d.length === 2)[0];
+  digits = digits.filter((d) => d !== one);
+  // 4
+  let four = digits.filter((d) => d.length === 4)[0];
+  digits = digits.filter((d) => d !== four);
+  // 7
+  let seven = digits.filter((d) => d.length === 3)[0];
+  digits = digits.filter((d) => d !== seven);
+  // 8
+  let eight = digits.filter((d) => d.length === 7)[0];
+  digits = digits.filter((d) => d !== eight);
 
-  // const twosEtc = digits.filter((x) => x.length === 5);
-  // const zerosEtc = digits.filter((x) => x.length === 6);
+  // ! HARDER NUMBERS
+  // 3
+  let three = digits
+    .filter((d) => d.length === 5)
+    .filter((x) => containsAll(x, one))[0];
+  digits = digits.filter((d) => d !== three);
+  // 9
+  let nine = digits
+    .filter((d) => d.length === 6)
+    .filter((x) => containsAll(x, four))[0];
+  digits = digits.filter((d) => d !== nine);
+  // 0
+  let zero = digits
+    .filter((d) => d.length === 6)
+    .filter((x) => containsAll(x, one))[0];
+  digits = digits.filter((d) => d !== zero);
+  // 5
+  let five = digits
+    .filter((d) => d.length === 5)
+    .filter((x) => containsAll(nine, x))[0];
+  digits = digits.filter((d) => d !== five);
+  // 2
+  let two = digits.filter((d) => d.length === 5)[0];
+  // 6
+  let six = digits.filter((d) => d.length === 6)[0];
 
-  console.log(remainingDigits);
-  // console.log(twosEtc.filter((x) => x)); // need to work out which is unique/has a segment from number 8 mapping
-  // console.log(zerosEtc);
+  return {
+    1: alphabetize(one),
+    2: alphabetize(two),
+    3: alphabetize(three),
+    4: alphabetize(four),
+    5: alphabetize(five),
+    6: alphabetize(six),
+    7: alphabetize(seven),
+    8: alphabetize(eight),
+    9: alphabetize(nine),
+    0: alphabetize(zero),
+  };
 };
 
 export const Solve8x2 = async () => {
-  const input = await GetTestData();
+  const input = await GetInputData();
   const lines = input.trim().split("\n");
 
-  // const splits = lines.slice(0).map((line) => {
-  //   const [map, code] = line.split(" | ");
-  //   console.log("map", map);
-  //   console.log("code", code);
+  const codes = lines.map((line) => {
+    const [clue, code] = line.split(" | ");
 
-  //   return { map, code };
-  // });
-  // console.log(splits[0]);
+    const encoder = Object.values(decodeDigits(clue.split(" ")));
 
-  const [map, code] = lines[0].split(" | ");
+    return code
+      .split(" ")
+      .map((c) => encoder.indexOf(alphabetize(c)))
+      .join("");
+  });
 
-  console.log("map", map);
-  console.log("code", code);
+  const total = codes.reduce((acc, cur) => {
+    return acc + parseInt(cur);
+  }, 0);
 
-  workOutDigits(map);
+  console.log(`Day 8 Part 2 - ${total}`);
 };
