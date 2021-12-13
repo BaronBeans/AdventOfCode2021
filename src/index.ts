@@ -8,33 +8,38 @@ import { Solve7x1, Solve7x2 } from "./007.solution";
 import { Solve8x1, Solve8x2 } from "./008.solution";
 import { Solve9x1, Solve9x2 } from "./009.solution";
 import { Solve10x1, Solve10x2 } from "./010.solution";
+import { Solve11x1, Solve11x2 } from "./011.solution";
 
-// Solve1x1();
-// Solve1x2();
+Solve1x1();
+Solve1x2();
 
-// Solve2x1();
-// Solve2x2();
+Solve2x1();
+Solve2x2();
 
-// Solve3x1();
-// Solve3x2();
+Solve3x1();
+Solve3x2();
 
-// Solve4x1();
-// Solve4x2();
+Solve4x1();
+Solve4x2();
 
-// Solve5x1();
-// Solve5x2();
+Solve5x1();
+Solve5x2();
 
-// Solve6x1();
-// Solve6x2();
+Solve6x1();
+Solve6x2();
 
-// Solve7x1();
+Solve7x1();
+// TODO: optimise this one, it takes too long
 // Solve7x2();
 
-// Solve8x1();
-// Solve8x2();
+Solve8x1();
+Solve8x2();
 
 Solve9x1();
 Solve9x2();
 
 Solve10x1();
 Solve10x2();
+
+Solve11x1();
+Solve11x2();
